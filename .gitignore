@@ -11,3 +11,4 @@ ETAGS
 *.zwc
 *.zwc.old
 *.elc
+**/.DS_Store
