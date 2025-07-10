@@ -849,9 +849,6 @@ fi
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-autoload -U compinit; compinit
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=(/Users/bryan.cole/.docker/completions $fpath)
 autoload -Uz compinit
