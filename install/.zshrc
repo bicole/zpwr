@@ -1,7 +1,4 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-
-    #...     ..      ..                                    ..
+#...     ..      ..                                    ..
   #x*8888x.:*8888: -"888:                            < .z@8"`
  #X   48888X `8888H  8888                 u.    u.    !@88E
 #X8x.  8888X  8888X  !888>       .u     x@88k u@88c.  '888E   u
@@ -840,10 +837,7 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-
-eval "$(~/.local/opt/brew/bin/starship init zsh)"
+eval "$(/opt/homebrew/bin/starship init zsh)"
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
