@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #...     ..      ..                                    ..
   #x*8888x.:*8888: -"888:                            < .z@8"`
  #X   48888X `8888H  8888                 u.    u.    !@88E
@@ -444,6 +451,9 @@ if [[ "$ZPWR_PLUGIN_MANAGER" == zinit ]]; then
     #     atload'_powerline_set_jobnum &> /dev/null;_powerline_set_main_keymap_name &> /dev/null; zpwrBindPrecmd; _p9k_precmd &> /dev/null'
     # zinit load MenkeTechnologies/zpwrp10k
 
+    zinit depth'1' lucid for \
+      romkatv/powerlevel10k
+
     # late
     () {
         local p
@@ -834,14 +844,3 @@ if [[ "$ZPWR_PROFILING" == true ]]; then
     zprof
 fi
 #}}}***********************************************************
-
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/bryan.cole/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
-
-eval "$(/opt/homebrew/bin/starship init zsh)"
-
-# Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
