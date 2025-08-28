@@ -1,9 +1,9 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# # Initialization code that may require console input (password prompts, [y/n]
+# # confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 #...     ..      ..                                    ..
   #x*8888x.:*8888: -"888:                            < .z@8"`
@@ -192,7 +192,6 @@ ZPWR_GH_PLUGINS=(
     MenkeTechnologies/jhipster-oh-my-zsh-plugin
     MenkeTechnologies/revolver
     $ZPWR_ZDHARMA/zbrowse
-    zsh-users/zsh-completions
     MenkeTechnologies/zsh-git-acp
     MenkeTechnologies/zsh-sudo
     MenkeTechnologies/zsh-nginx
@@ -447,36 +446,26 @@ if [[ "$ZPWR_PLUGIN_MANAGER" == zinit ]]; then
 
     # late load prompt and call precmd fns first thing after prompt loads
 
-    # zinit ice lucid nocd nocompile wait'!' atinit'zpwrBindPowerline; zpwrBindPowerlineTmux; zpwrBindDirs; zpwrPrecmd' \
-    #     atload'_powerline_set_jobnum &> /dev/null;_powerline_set_main_keymap_name &> /dev/null; zpwrBindPrecmd; _p9k_precmd &> /dev/null'
-    # zinit load MenkeTechnologies/zpwrp10k
-
-    zinit depth'1' lucid for \
+    zinit lucid nocd nocompile wait'!' atinit'zpwrBindPowerline; zpwrBindPowerlineTmux; zpwrBindDirs; zpwrPrecmd' \
+      atload'_powerline_set_jobnum &> /dev/null;_powerline_set_main_keymap_name &> /dev/null; zpwrBindPrecmd; _p9k_precmd &> /dev/null' for \
       romkatv/powerlevel10k
 
     # late
     () {
         local p
+        local l
 
-        for p in $ZPWR_OMZ_COMPS; do
-            zinit ice lucid nocompile as'completion' pick'null' wait
-            zinit snippet OMZP::$p
-        done
+        zinit lucid nocompile as'completion' pick'null' wait for ${^ZPWR_OMZ_COMPS/#/OMZP::}
+
         # WARNING temporary hack to allow linking OMZ completions into .zinit/completions
         for p in $ZPWR_OMZ_COMPS; do
             ln -sfn $ZSH/snippets/OMZP::${p%/*}/${p#*/}/${p#*/} $ZSH/completions/${p#*/}
         done
 
-        for p in $ZPWR_OMZ_LIBS; do
-            zinit ice lucid nocompile wait atload='zpwrOmzOverrides'
-            zinit snippet OMZL::$p
-        done
+        zinit lucid nocompile wait atload='zpwrOmzOverrides' for ${^ZPWR_OMZ_LIBS/#/OMZL::}
 
         # late
-        for p in $ZPWR_OMZ_PLUGINS; do
-            zinit ice lucid nocompile wait
-            zinit snippet OMZP::$p
-        done
+        zinit lucid nocompile wait for ${^ZPWR_OMZ_PLUGINS/#/OMZP::}
 
         # WARNING download extra plugin files manually until zinit supports snippets with multiple files
         if [[ $ZPWR_OS_TYPE == darwin ]]; then
@@ -494,75 +483,63 @@ if [[ "$ZPWR_PLUGIN_MANAGER" == zinit ]]; then
         fi
 
         # late GH plugins
-        for p in $ZPWR_GH_PLUGINS; do
-            zinit ice lucid nocompile wait
-            zinit load $p
-        done
+        zinit lucid nocompile wait for $ZPWR_GH_PLUGINS
     }
 
-    zinit ice as'program' lucid nocompile pick'bin/fzf' wait
-    zinit load MenkeTechnologies/fzf
+    zinit as'program' lucid wait for \
+      nocompile pick'bin/fzf' \
+        MenkeTechnologies/fzf \
+      pick'bin/git-fuzzy' \
+        bigH/git-fuzzy
 
-
-    zinit ice as'program' lucid pick'bin/git-fuzzy' wait
-    zinit load bigH/git-fuzzy
-
-
-    zinit ice lucid nocompile wait atinit='zpwrBindOverrideOMZ;zpwrBindForGit'
-    zinit load \
-        MenkeTechnologies/forgit
-
-    zinit ice lucid nocompile wait atinit='zpwrBindZdharma' atload'zpwrBindZdharmaPost'
-    zinit load \
+    zinit lucid nocompile wait for \
+      atinit='zpwrBindOverrideOMZ;zpwrBindForGit' \
+        MenkeTechnologies/forgit \
+      atinit='zpwrBindZdharma' atload'zpwrBindZdharmaPost' \
         MenkeTechnologies/zconvey
 
     # late bind autopair keystrokes
-    zinit ice lucid nocompile wait'0' atload='zpwrBindInterceptSurround'
-    zinit load \
+    zinit lucid nocompile wait'0' atload='zpwrBindInterceptSurround' for \
         hlissner/zsh-autopair
 
     # override OMZ/plugin aliases with own aliases
-    zinit ice lucid nocompile wait'0a' \
-    atload'zpwrBindAliasesLate; zpwrCreateAliasCache; zpwrBindAliasesZshLate; zpwrBindOverrideZLE'
-    zinit load \
+    zinit lucid nocompile wait'0a' \
+      atload'zpwrBindAliasesLate; zpwrCreateAliasCache; zpwrBindAliasesZshLate; zpwrBindOverrideZLE' for \
         MenkeTechnologies/zsh-expand
 
     if [[ $ZPWR_AUTO_COMPLETE == true ]]; then
-        zinit ice lucid nocompile wait"0b" atinit='zpwrBindOverrideAutoComplete'
-    zinit load \
-        MenkeTechnologies/zsh-autocomplete
+        zinit lucid nocompile wait"0b" atinit='zpwrBindOverrideAutoComplete' for \
+          MenkeTechnologies/zsh-autocomplete
     fi
 
     # late bind keystrokes, must come before syntax highlight
-    zinit ice lucid nocompile wait'0c' atload'zpwrBindHistorySubstring'
-    zinit load \
+    zinit lucid nocompile wait'0c' atload'zpwrBindHistorySubstring' for \
         zsh-users/zsh-history-substring-search
 
     # late , must come before syntax highlight
-    zinit ice lucid nocompile wait'0d' \
-        atload'_zsh_autosuggest_start; zpwrBindFZFLate; zpwrBindVerbs; zpwrBindZstyle'
-    zinit load \
+    zinit wait'0d' lucid for \
+      atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+        zdharma-continuum/fast-syntax-highlighting \
+      blockf \
+        zsh-users/zsh-completions \
+      atload'!_zsh_autosuggest_start; zpwrBindFZFLate; zpwrBindVerbs; zpwrBindZstyle' \
         zsh-users/zsh-autosuggestions
 
     # late loaded, must be last to load
     # runs ZLE keybindings to override other late loaders
-    zinit ice lucid nocompile wait'0e' atinit'zpwrBindPenultimate; zpwrBindFinal; zpwrTokenPost'
-    zinit load \
+    zinit lucid nocompile wait'0e' atinit'zpwrBindPenultimate; zpwrBindFinal; zpwrTokenPost' for \
         MenkeTechnologies/zsh-zinit-final
 
     # use fpath NOT symlinks into ~/.zinit/completions
     # to have more-completions be last resort and not overrride system completions
-    zinit ice lucid nocompile wait'0f' nocompletions
-    zinit load \
+    zinit lucid nocompile wait'0f' nocompletions for \
         MenkeTechnologies/zsh-more-completions
 
-    zinit ice lucid nocompile nocd as'null' wait"${ZPWR_ZINIT_COMPINIT_DELAY}g" \
-        atinit'zicompinit; zicdreplay;zpwrBindOverrideOMZCompdefs'
-    zinit light \
+    zinit lucid nocompile nocd as'null' wait"${ZPWR_ZINIT_COMPINIT_DELAY}g" \
+      atinit'zicompinit; zicdreplay;zpwrBindOverrideOMZCompdefs' for \
         MenkeTechnologies/zsh-zinit-final
 
-    zinit ice lucid nocompile wait"${ZPWR_ZINIT_COMPINIT_DELAY}h" nocompletions atload='zpwrDedupPaths;zpwrBindPreexecChpwd'
-    zinit load \
+    zinit lucid nocompile wait"${ZPWR_ZINIT_COMPINIT_DELAY}h" nocompletions atload='zpwrDedupPaths;zpwrBindPreexecChpwd' for \
         $ZPWR_ZDHARMA/fast-syntax-highlighting
 
 elif [[ "$ZPWR_PLUGIN_MANAGER" == oh-my-zsh ]]; then
@@ -584,7 +561,6 @@ elif [[ "$ZPWR_PLUGIN_MANAGER" == oh-my-zsh ]]; then
     fi
 
 else
-
     zpwrLogConsoleErr "Unsupported ZPWR_PLUGIN_MANAGER '$ZPWR_PLUGIN_MANAGER'!"
 fi
 

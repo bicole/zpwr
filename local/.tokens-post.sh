@@ -23,56 +23,45 @@ if zpwrExists zinit; then
      zdharma-continuum/zinit-annex-unscope \
      psprint/zinit-annex-pull
 
-    zinit wait lucid for \
+    zinit wait"0a" lucid from"gh" pick"async.zsh" for \
+      mafredri/zsh-async
+
+    zinit wait"0b" lucid for \
             OMZL::git.zsh \
         atload"unalias grv" \
-            OMZP::git
+            OMZP::git \
+        nocompile \
+            felipec/git-completion
 
-    zinit wait'!' lucid for \
+    zinit wait'!0c' lucid for \
         OMZL::prompt_info_functions.zsh \
-        OMZT::gnzh
-
-    # gitfast
-    # shellcheck disable=SC1011
-    zinit wait'0a'H lucid nocompile for \
-        felipec/git-completion
 
     zinit wait"1a" lucid for \
+      atload'ZSH_ALIAS_FINDER_IGNORED="lc,ls,cd,dir,g"' \
         akash329d/zsh-alias-finder \
-        sparsick/ansible-zsh
-
-    zinit svn from"github" pick"async.zsh" light-mode for \
-        mafredri/zsh-async
-
-    zinit proto'ssh' for \
-        vineyardbovines/auto-color-ls
-
-    zinit wait'1c' for MichaelAquilina/zsh-auto-notify
-
-    zinit wait"1b" proto'ssh' for \
+        MichaelAquilina/zsh-auto-notify \
+        MichaelAquilina/zsh-autoswitch-virtualenv \
+      svn pick"auto-venv.zsh" from"github" ver"main" \
+        Skylor-Tang/auto-venv \
+      proto'ssh' atload'alias lc="colorls -lA --sd --gs --dark -t"' \
+        vineyardbovines/auto-color-ls \
+      proto'ssh' \
         manlao/zsh-auto-nvm
 
-    zinit svn pick"auto-venv.zsh" from"github" ver"main" for \
-        Skylor-Tang/auto-venv
-
-    zinit wait lucid for \
-        MichaelAquilina/zsh-autoswitch-virtualenv \
+    zinit wait"1b" lucid for \
         dmakeienko/azcli \
         milespossing/Azure-Keyvault-Zsh \
-        svn           Tarrasch/zsh-bd \
+        Tarrasch/zsh-bd \
         begris/bw-zsh-plugin \
-        bossjones/boss-git-zsh-plugin \
+        sparsick/ansible-zsh
 
   # Packs
-    # ls_colors: default profile
     # system-completions: Utilize Turbo and initialize the completion system
     # fzy: Download with the bin-gem-node annex-utilizing ice list FROM GIT REPOSITORY
     zinit wait lucid for \
-        pack ls_colors \
         pack atload=+"zicompinit; zicdreplay" system-completions \
         pack"bgn+keys" fzf \
         pack"bgn" git fzy \
-        pack apr \
         pack dircolors-material
 
   # Programs
@@ -82,38 +71,30 @@ if zpwrExists zinit; then
          sbin"**/bat"       @sharkdp/bat \
          sbin"exa* -> exa"  ogham/exa
 
-    zinit ice from"gh-r" as"program" mv"docker* -> docker-compose"
+    zinit ice lucid from"gh-r" as"program" mv"docker* -> docker-compose"
     zinit light docker/compose
 
     # jarun/nnn, a file browser, using the for-syntax
-    zinit pick"misc/quitcd/quitcd.zsh" sbin make light-mode for jarun/nnn
+    zinit lucid pick"misc/quitcd/quitcd.zsh" sbin make light-mode for jarun/nnn
 
     # zinit ice as"program" atclone"rm -f src/auto/config.cache; ./configure" \
     #     atpull"%atclone" make pick"src/vim"
     # zinit light vim/vim
 
-    zinit ice as"program" make'!' atclone'./direnv hook zsh > zhook.zsh' \
-        atpull'%atclone' src"zhook.zsh"
-    zinit light direnv/direnv
+    zinit from"gh-r" as"program" mv"direnv* -> direnv" \
+        atclone'./direnv hook zsh > zhook.zsh' \
+        atpull'%atclone' src"zhook.zsh" pick"direnv" for \
+            direnv/direnv
 
-    # zinit ice from"gh-r" as"program" mv"direnv* -> direnv"
-    # zinit light direnv/direnv
-
-    zinit ice from"gh-r" as"program" mv"shfmt* -> shfmt"
+    zinit ice lucid from"gh-r" as"program" mv"shfmt* -> shfmt"
     zinit light mvdan/sh
 
-    zinit ice as"program" pick"yank" make
+    zinit ice lucid as"program" pick"yank" make
     zinit light mptre/yank
 
     zinit ice wait'2' lucid has'cmake;make' as'command' pick'src/vramsteg' proto'ssh' \
         atclone'cmake .' atpull'%atclone' make
     zinit light z-shell/vramsteg-zsh
-
-    zinit ice as"program" pick"$ZPFX/sdkman/bin/sdk" id-as'sdkman' run-atpull \
-        atclone"wget https://get.sdkman.io/?rcupdate=false -O scr.sh; SDKMAN_DIR=$ZPFX/sdkman bash scr.sh" \
-        atpull"SDKMAN_DIR=$ZPFX/sdkman sdk selfupdate" \
-        atinit"export SDKMAN_DIR=$ZPFX/sdkman; source $ZPFX/sdkman/bin/sdkman-init.sh"
-    zinit light zdharma-continuum/null
 
     # asciinema
     zinit ice as"command" wait lucid \
@@ -132,11 +113,8 @@ if zpwrExists zinit; then
             zdharma-continuum/null
 
   # Completions
-    zinit ice as"completion" proto"ssh"
-    zinit snippet https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
-
-    zinit ice as"completion"
-    zinit light zsh-users/zsh-completions
+    zinit as"completion" proto"ssh" lucid for /
+      https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
 
   # Scripts
     # ogham/exa also uses the definitions
@@ -159,26 +137,49 @@ if zpwrExists zinit; then
                 atclone"./build.zsh" atpull"%atclone"
     zinit load molovo/zunit
 
-    zinit ice as"program" pick"$ZPFX/bin/git-*" make"PREFIX=$ZPFX" nocompile
+    zinit ice as"program" pick"$ZPFX/bin/git-*" make"PREFIX=$ZPFX" nocompile lucid
     zinit light tj/git-extras
 
     # shellcheck disable=SC2016
     zinit ice as"program" atclone'perl Makefile.PL PREFIX=$ZPFX' \
-        atpull'%atclone' make'install' pick"$ZPFX/bin/git-cal"
+        atpull'%atclone' make'install' pick"$ZPFX/bin/git-cal" lucid
     zinit light k4rthik/git-cal
 
-    zinit ice as"program" id-as"git-unique" pick"git-unique"
-    zinit snippet git@github.com/Osse/git-scripts/blob/master/git-unique
+    # git-scripts
+    GitScripts=(
+      git-blamediff
+      git-blamedir
+      git-brv
+      git-fflocals
+      git-findfixup
+      git-move
+      git-rewrite
+      git-unique
+      git-unmerged
+      git-vdiff
+    )
+    for s in ${GitScripts}; do
+      zinit ice as"program" id-as"${s}" pick"${s}" lucid
+      zinit snippet "https://github.com/Osse/git-scripts/blob/master/${s}"
+    done
 
-    zinit ice as"program" cp"wd.sh -> wd" mv"_wd.sh -> _wd" \
-        atpull'!git reset --hard' pick"wd"
-    zinit light mfaerevaag/wd
+    # zinit ice as"program" id-as"git-unique" pick"git-unique" lucid
+    # zinit snippet git@github.com/Osse/git-scripts/blob/master/git-unique
 
-    zinit ice as"program" pick"bin/archey"
-    zinit load obihann/archey-osx
+    # zinit ice as"program" cp"wd.sh -> wd" mv"_wd.sh -> _wd" \
+    #     atpull'!git reset --hard' pick"wd" lucid
+    # zinit light mfaerevaag/wd
+    zinit as"program" cp"wd.sh -> wd" mv"_wd.sh -> _wd" \
+        atpull'!git reset --hard' pick"wd" lucid for \
+          mfaerevaag/wd
+
+    # zinit ice as"program" pick"bin/archey" lucid
+    # zinit load obihann/archey-osx
+    zinit as"program" pick"bin/archey" lucid for \
+      obihann/archey-osx
 
   # Plugins
-    zinit ice pick"h.sh"
+    zinit ice pick"h.sh" lucid
     zinit light paoloantinori/hhighlighter
 
     # # forgit
@@ -188,10 +189,6 @@ if zpwrExists zinit; then
     # diff-so-fancy
     zinit ice wait"2" lucid as"program" pick"bin/git-dsf"
     zinit load zdharma-continuum/zsh-diff-so-fancy
-
-    # zsh-startify, a vim-startify like plugin
-    zinit ice wait"0b" lucid atload"zsh-startify"
-    zinit load zdharma-continuum/zsh-startify
 
     # declare-zsh
     zinit ice wait"2" lucid
@@ -214,6 +211,7 @@ if zpwrExists zinit; then
     zinit load zdharma-continuum/history-search-multi-word
 
     # ZUI and Crasis
+
     zinit ice wait"1" lucid
     zinit load zdharma-continuum/zui
 
@@ -226,13 +224,16 @@ if zpwrExists zinit; then
     zinit load voronkovich/gitignore.plugin.zsh
 
     # Autosuggestions & fast-syntax-highlighting
-    # zinit ice wait lucid atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
-    # zinit light zdharma-continuum/fast-syntax-highlighting
-    # # zsh-autosuggestions
-    # zinit ice wait lucid atload"!_zsh_autosuggest_start"
-    # zinit load zsh-users/zsh-autosuggestions
+    # zinit wait lucid for \
+    #   atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
+    #     zdharma-continuum/fast-syntax-highlighting \
+    #   blockf \
+    #     zsh-users/zsh-completions \
+    #   atload"!_zsh_autosuggest_start" \
+    #     zsh-users/zsh-autosuggestions
 
   # Snippets
+    zinit ice wait"3" lucid
     zinit snippet OMZP::macos
 
 
@@ -251,26 +252,36 @@ if zpwrExists zinit; then
       zdharma-continuum/git-url
 
   # Themes
-    zinit ice wait'!' lucid nocompletions \
-           compile"{zinc_functions/*,segments/*,zinc.zsh}" \
-           atload'!prompt_zinc_setup; prompt_zinc_precmd'
-    zinit load robobenklein/zinc
+    # zinit ice wait'!' lucid nocompletions \
+    #        compile"{zinc_functions/*,segments/*,zinc.zsh}" \
+    #        atload'!prompt_zinc_setup; prompt_zinc_precmd'
+    # zinit load robobenklein/zinc
 
-    # ZINC git info is already async, but if you want it
-    # even faster with gitstatus in Turbo mode:
-    zinit wait'3b' proto'ssh' for \
-        romkatv/gitstatus
+    # # ZINC git info is already async, but if you want it
+    # # even faster with gitstatus in Turbo mode:
+    # zinit wait'3b' proto'ssh' for \
+    #     romkatv/gitstatus
 
-    zinit wait configure make for universal-ctags/ctags
+    zinit lucid wait'4' configure make for universal-ctags/ctags
 
     zinit wait'5' lucid proto'ssh' for \
             OMZP::colored-man-pages \
         as'completion' \
             OMZP::docker/completions/_docker
 
-  # Ensures that building formulae from source doesn't link against Pyenv-provided Python
-  export BREW_ORIGINAL="$(which brew)"
-  alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+    zinit lucid wait'5a' proto'ssh' for \
+        multisrc'per-directory-history.plugin.zsh per-directory-history.zsh' \
+          OMZP::per-directory-history \
+        multisrc'gitfast.plugin.zsh git-prompt.zsh' \
+          OMZP::gitfast
+
+    zinit lucid wait'!6a' for zdharma-continuum/null
+
+  if zpwrExists pyenv; then
+    # Ensures that building formulae from source doesn't link against Pyenv-provided Python
+    export BREW_ORIGINAL="$(which brew)"
+    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  fi
 
   source ~/.config/envman/PATH.env
 
